@@ -1,0 +1,70 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: UtilTests
+      id: utiltests
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: UtilTests
+        setup-command: ''
+        command: gradle test --tests "*Util*"
+        timeout: 10
+        max-score: 1
+    - name: InsertionSelectionSortTests
+      id: insertionselectionsorttests
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: InsertionSelectionSortTests
+        setup-command: ''
+        command: gradle test --tests "*Insertion*" --tests "*Selection*"
+        timeout: 10
+        max-score: 1
+    - name: MergeQuickSortTests
+      id: mergequicksorttests
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: MergeQuickSortTests
+        setup-command: ''
+        command: gradle test --tests "*Merge*" --tests "*Quick*"
+        timeout: 10
+        max-score: 1
+    - name: AllTests
+      id: alltests
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: AllTests
+        setup-command: ''
+        command: gradle test
+        timeout: 10
+        max-score: 1
+    - name: SearchTests
+      id: searchtests
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: SearchTests
+        setup-command: ''
+        command: gradle test --tests "*Linear*" --tests "*Binary*"
+        timeout: 10
+        max-score: 1
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        UTILTESTS_RESULTS: "${{steps.utiltests.outputs.result}}"
+        INSERTIONSELECTIONSORTTESTS_RESULTS: "${{steps.insertionselectionsorttests.outputs.result}}"
+        MERGEQUICKSORTTESTS_RESULTS: "${{steps.mergequicksorttests.outputs.result}}"
+        ALLTESTS_RESULTS: "${{steps.alltests.outputs.result}}"
+        SEARCHTESTS_RESULTS: "${{steps.searchtests.outputs.result}}"
+      with:
+        runners: utiltests,insertionselectionsorttests,mergequicksorttests,alltests,searchtests
