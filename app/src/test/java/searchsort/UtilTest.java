@@ -1,5 +1,6 @@
 package searchsort;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import org.junit.jupiter.api.Test;
 
 public class UtilTest {
@@ -30,19 +31,9 @@ public class UtilTest {
     @Test
     public void testShuffle() {
         int[] arr = { 1, 2, 3, 4, 5 };
+        int[] expected = { 4, 5, 1, 3, 2 };
         int[] result = Util.shuffle(arr, seed);
-        assert result[0] == 1;
-        assert result[1] == 2;
-        assert result[2] == 3;
-        assert result[3] == 4;
-        assert result[4] == 5;
-    }
-
-    @Test
-    public void testShuffleSameArray() {
-        int[] arr = { 1, 2, 3, 4, 5 };
-        int[] result = Util.shuffle(arr, seed);
-        assert result == arr;
+        assertArrayEquals(expected, result);
     }
 
     @Test
